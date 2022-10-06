@@ -20,7 +20,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "babel src --out-dir . && tsc",
+    "build": "babel src --out-dir dist && tsc",
     "bump": "npm version",
     "test": "jest",
     "test:watch": "jest --watch",
