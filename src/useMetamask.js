@@ -36,26 +36,31 @@ const useMetamask = () => {
     if (_isConnectCalled.current) throw Error("Connect method already called.");
     _isConnectCalled.current = true;
     
-    const _web3 = new Web3Interface(
-      ...(Object.keys(settings).length 
-        ? [provider, settings] 
-        : [provider])
-    );
-    dispatch({ type: "SET_WEB3", payload: _web3 });
-    
-    await getAccounts({ requestPermission: true });
-    await getChain();
-    
-    window.ethereum.on("accountsChanged", (accounts) => {
-      if (!accounts.length) dispatch({ type: "SET_CONNECTED", payload: false });
-      dispatch({ type: "SET_ACCOUNT", payload: accounts });
-    });
+    try {
+      const _web3 = new Web3Interface(
+        ...(Object.keys(settings).length 
+          ? [provider, settings] 
+          : [provider])
+      );
+      dispatch({ type: "SET_WEB3", payload: _web3 });
 
-    window.ethereum.on("chainChanged", (chainId) => {
-      const _chainId   = parseInt(chainId, 16).toString();
-      const _chainInfo = { id: _chainId, name: chains(_chainId) };
-      dispatch({ type: "SET_CHAIN", payload: _chainInfo });
-    });
+      await getAccounts({ requestPermission: true });
+      await getChain();
+
+      window.ethereum.on("accountsChanged", (accounts) => {
+        if (!accounts.length) dispatch({ type: "SET_CONNECTED", payload: false });
+        dispatch({ type: "SET_ACCOUNT", payload: accounts });
+      });
+
+      window.ethereum.on("chainChanged", (chainId) => {
+        const _chainId   = parseInt(chainId, 16).toString();
+        const _chainInfo = { id: _chainId, name: chains(_chainId) };
+        dispatch({ type: "SET_CHAIN", payload: _chainInfo });
+      });
+    } catch (e) {
+      _isConnectCalled.current = false;
+      throw e
+    }
 
     _isConnectCalled.current = false;
   };
