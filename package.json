@@ -18,7 +18,7 @@
     "crypto",
     "metamask"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "babel src --out-dir dist && tsc",
     "bump": "npm version",
